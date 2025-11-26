@@ -11,12 +11,11 @@ CREATE TABLE ToyotaCars (
     CarID INT PRIMARY KEY AUTO_INCREMENT,
     CategoryID INT,
     Model VARCHAR(50),
-    Year INT CHECK (Year >= 2000 AND Year <= YEAR(CURDATE()) + 1),
+    Year INT,
     Price INT DEFAULT 0,
     Available BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
 );
-
 
 CREATE TABLE Employees (
     EmployeeID INT PRIMARY KEY AUTO_INCREMENT,
@@ -27,7 +26,7 @@ CREATE TABLE Customers (
     CustomerID INT PRIMARY KEY AUTO_INCREMENT,
     CustomerName VARCHAR(100),
     ContactNumber VARCHAR(15),
-    Email VARCHAR(100) CHECK (Email LIKE '%_@__%.__%'),
+    Email VARCHAR(100),
     RFC VARCHAR(20)
 );
 
@@ -239,6 +238,43 @@ BEGIN
     END IF;
 END$$
 DELIMITER ;
+
+/* Creación de Funciones */
+
+DELIMITER $$
+CREATE FUNCTION CarAge(p_CarID INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE age INT;
+
+    SELECT YEAR(CURDATE()) - Year
+    INTO age
+    FROM ToyotaCars
+    WHERE CarID = p_CarID;
+
+    RETURN age;
+END$$
+DELIMITER ;
+
+
+
+DELIMITER $$
+CREATE FUNCTION CustomerTotal(p_CustomerID INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE total INT;
+
+    SELECT IFNULL(SUM(SalePrice),0)
+    INTO total
+    FROM Sales
+    WHERE CustomerID = p_CustomerID;
+
+    RETURN total;
+END$$
+DELIMITER ;
+
 
 
 
