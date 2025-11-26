@@ -1,7 +1,7 @@
 CREATE DATABASE Cars;
 USE Cars;
 
-/* Creación de TABLAS */
+-- Creación de TABLAS 
 CREATE TABLE Category (
     CategoryID INT PRIMARY KEY AUTO_INCREMENT,
     CategoryName VARCHAR(50)
@@ -41,7 +41,7 @@ CREATE TABLE Sales (
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
 );
-/* Creación de Vistas */
+-- Creación de Vistas 
 
 CREATE VIEW SalesReport AS
 SELECT
@@ -95,7 +95,7 @@ SELECT
 FROM Sales s
 GROUP BY YEAR(s.SaleDate), MONTH(s.SaleDate);
 
-/* Creación de procedimientos */
+-- Creación de procedimientos 
 
 DELIMITER $$
 CREATE PROCEDURE RegisterSale(
@@ -171,7 +171,7 @@ BEGIN
 END $$
 DELIMITER ;
 
-/* Creación de Triggers o Disparadores */
+-- Creación de Triggers o Disparadores 
 
 DELIMITER $$
 CREATE TRIGGER trg_BeforeInsert_Sales
@@ -227,9 +227,9 @@ BEGIN
     DECLARE minPrice INT;
 
     SET minPrice = CASE NEW.CategoryID
-        WHEN 1 THEN 15000  -- Sedan
-        WHEN 2 THEN 25000  -- SUV
-        WHEN 3 THEN 20000  -- Pickup
+        WHEN 1 THEN 15000
+        WHEN 2 THEN 25000
+        WHEN 3 THEN 20000
         ELSE 10000
     END;
 
@@ -239,7 +239,7 @@ BEGIN
 END$$
 DELIMITER ;
 
-/* Creación de Funciones */
+-- Creación de Funciones 
 
 DELIMITER $$
 CREATE FUNCTION CarAge(p_CarID INT)
@@ -278,7 +278,7 @@ DELIMITER ;
 
 
 
-/* Inserciones como TEST para la base de datos */
+-- Inserciones como TEST para la base de datos 
 
 INSERT INTO Category (CategoryName) VALUES
 ('Sedan'),
