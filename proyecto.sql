@@ -172,6 +172,78 @@ BEGIN
 END $$
 DELIMITER ;
 
+/* Creación de Triggers o Disparadores */
+
+DELIMITER $$
+CREATE TRIGGER trg_BeforeInsert_Sales
+BEFORE INSERT ON Sales
+FOR EACH ROW
+BEGIN
+    IF (SELECT Available FROM ToyotaCars WHERE CarID = NEW.CarID) = FALSE THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El auto no está disponible.';
+    END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_AfterInsert_Sales
+AFTER INSERT ON Sales
+FOR EACH ROW
+BEGIN
+    UPDATE ToyotaCars
+    SET Available = FALSE
+    WHERE CarID = NEW.CarID;
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER trg_BeforeUpdate_ToyotaCars
+BEFORE UPDATE ON ToyotaCars
+FOR EACH ROW
+BEGIN
+    IF NEW.Price < 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El precio no puede ser negativo.';
+    END IF;
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER trg_BeforeUpdate_Customers
+BEFORE UPDATE ON Customers
+FOR EACH ROW
+BEGIN
+    SET NEW.Email = LOWER(NEW.Email);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_BeforeInsert_ToyotaCars
+BEFORE INSERT ON ToyotaCars
+FOR EACH ROW
+BEGIN
+    DECLARE minPrice INT;
+
+    SET minPrice = CASE NEW.CategoryID
+        WHEN 1 THEN 15000  -- Sedan
+        WHEN 2 THEN 25000  -- SUV
+        WHEN 3 THEN 20000  -- Pickup
+        ELSE 10000
+    END;
+
+    IF NEW.Price < minPrice THEN
+        SET NEW.Price = minPrice;
+    END IF;
+END$$
+DELIMITER ;
+
+
+
+/* Inserciones como TEST para la base de datos */
+
 INSERT INTO Category (CategoryName) VALUES
 ('Sedan'),
 ('SUV'),
